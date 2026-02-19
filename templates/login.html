@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-white text-center py-4">
+                <h3 class="text-primary fw-bold">Sisteme Giriş</h3>
+                <p class="text-muted small mb-0">Lütfen giriş tipini seçiniz</p>
+            </div>
+            <div class="card-body p-4">
+                
+                <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#doctor-tab">
+                            <i class="fa-solid fa-user-doctor me-2"></i>Doktor
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#patient-tab">
+                            <i class="fa-solid fa-user-injured me-2"></i>Hasta
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- Doktor Girişi Formu -->
+                    <div class="tab-pane fade show active" id="doctor-tab">
+                        <form action="/login" method="POST">
+                            <input type="hidden" name="role" value="doctor">
+                            <div class="mb-3">
+                                <label class="form-label">Kullanıcı Adı</label>
+                                <input type="text" name="username" class="form-control" placeholder="Kullanıcı Adı" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Şifre</label>
+                                <input type="password" name="password" class="form-control" placeholder="Şifrenizi Girin" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Doktor Girişi Yap</button>
+                        </form>
+                    </div>
+
+                    <!-- Hasta Giriş Formu -->
+                    <div class="tab-pane fade" id="patient-tab">
+                        <form action="/login" method="POST">
+                            <input type="hidden" name="role" value="patient">
+                            <div class="mb-3">
+                                <label class="form-label">TC Kimlik No</label>
+                                <input type="text" name="tc_no" class="form-control" placeholder="11 haneli TC No" required maxlength="11">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Şifre</label>
+                                <input type="password" name="password" class="form-control" placeholder="Şifrenizi Girin" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Hasta Girişi Yap</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <p>Hesabınız yok mu? <a href="/register">Kayıt Olun</a></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

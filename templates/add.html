@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <a href="/doctor/dashboard" class="text-decoration-none mb-3 d-inline-block">&larr; Listeye Dön</a>
+        
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fa-solid fa-file-medical me-2"></i>Yeni Laboratuvar Kaydı</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- DİKKAT: Dosya yüklemek için enctype="multipart/form-data" EKLENDİ -->
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Hasta Adı Soyadı</label>
+                            <input type="text" name="patient_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">TC Kimlik No</label>
+                            <input type="text" name="tc_no" class="form-control" maxlength="11" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-danger fw-bold">Hasta Şifresi (Sadece Yeni Hasta İçin)</label>
+                        <input type="password" name="patient_password" class="form-control" placeholder="Hasta sistemde kayıtlı değilse şifre belirleyin">
+                        <div class="form-text">Eğer hasta zaten kayıtlıysa bu alanı boş bırakabilirsiniz.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Laboratuvar Sonuçları (Metin)</label>
+                        <textarea name="lab_result" class="form-control" rows="4" placeholder="Metin olarak sonuçlar..." required></textarea>
+                    </div>
+
+                    <!-- YENİ: DOSYA YÜKLEME KUTUSU BURADA -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Rapor Dosyası Ekle (PDF/JPG)</label>
+                        <input type="file" name="file" class="form-control">
+                        <div class="form-text text-success">
+                            <i class="fa-solid fa-shield-alt"></i> Yüklenen dosya sunucuda şifrelenerek (AES) saklanacaktır.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fa-solid fa-lock me-2"></i>Şifrele ve Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <a href="/doctor/dashboard" class="text-decoration-none mb-3 d-inline-block">&larr; İptal ve Geri Dön</a>
+        
+        <div class="card shadow border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fa-solid fa-pen-to-square me-2"></i>Raporu Düzenle</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Hasta Adı Soyadı</label>
+                            <input type="text" name="patient_name" class="form-control" value="{{ report.patient_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">TC Kimlik No</label>
+                            <input type="text" name="tc_no" class="form-control" value="{{ report.tc_no }}" maxlength="11" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Laboratuvar Sonuçları</label>
+                        <textarea name="lab_result" class="form-control" rows="6" required>{{ content }}</textarea>
+                        <div class="form-text text-muted">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Değişiklik yaptığınızda veri <strong>yeniden şifrelenecek</strong> ve eski hash değeri güncellenecektir.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fa-solid fa-save me-2"></i>Güncelle ve Şifrele
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

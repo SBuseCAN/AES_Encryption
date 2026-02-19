@@ -1,0 +1,23 @@
+from faker import Faker
+import random
+
+fake = Faker('tr_TR') # Türkçe isimler ve adresler üretir
+
+def create_fake_patient_data():
+    lab_tests = ["Hemogram", "Biyokimya", "Hormon", "İdrar Analizi"]
+    results = ["Pozitif", "Negatif", "Sınırda", "Normal"]
+    
+    data = {
+        "hasta_adi": fake.name(),
+        "tc_no": fake.ssn(), # Rastgele TC benzeri numara
+        "doktor": f"Dr. {fake.first_name()} {fake.last_name()}",
+        "test_tipi": random.choice(lab_tests),
+        "sonuc_degeri": random.randint(10, 500),
+        "sonuc_durumu": random.choice(results),
+        "aciklama": fake.text(max_nb_chars=100)
+    }
+    # Bu veriyi string'e çevirip şifreleyeceğiz
+    return f"Hasta: {data['hasta_adi']} | Test: {data['test_tipi']} | Sonuç: {data['sonuc_degeri']} ({data['sonuc_durumu']}) | Not: {data['aciklama']}"
+
+# Örnek çıktı:
+print(create_fake_patient_data())

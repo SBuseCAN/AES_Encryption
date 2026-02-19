@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- ÜST BAŞLIK VE BUTONLAR -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-primary"><i class="fa-solid fa-user-md me-2"></i>Doktor Kontrol Paneli</h2>
+        <p class="text-muted mb-0">Güvenli Sağlık Veri Yönetim Sistemi</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-dark shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#logPanel">
+            <i class="fa-solid fa-terminal me-2"></i>Sistem Logları
+        </button>
+        <a href="/doctor/add" class="btn btn-primary shadow-sm">
+            <i class="fa-solid fa-plus-circle me-2"></i>Yeni Rapor Ekle
+        </a>
+    </div>
+</div>
+
+<!-- TABLO ALANI -->
+<div class="card shadow mb-5">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-file-medical-alt me-2 text-primary"></i>Kayıtlı Raporlar</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Tarih</th>
+                        <th>TC No</th>
+                        <th>Hasta Adı</th>
+                        <th>Durum</th>
+                        <th class="text-end pe-4" style="min-width: 180px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr class="{{ 'table-danger' if report.backup_encrypted_content else '' }}">
+                        <!-- Tarih -->
+                        <td class="ps-4 small text-muted">{{ report.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        
+                        <!-- TC No -->
+                        <td><span class="badge bg-light text-dark border">{{ report.tc_no }}</span></td>
+                        
+                        <!-- İsim -->
+                        <td class="fw-bold">{{ report.patient_name }}</td>
+                        
+                        <!-- Durum Rozeti -->
+                        <td>
+                            {% if report.backup_encrypted_content %}
+                                <span class="badge bg-danger blink-animation">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> VERİ BOZULDU
+                                </span>
+                            {% else %}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success">
+                                    <i class="fa-solid fa-shield-alt"></i> GÜVENLİ
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- BUTONLAR (GÜNCELLENEN KISIM) -->
+                        <td class="text-end pe-4">
+                            {% if report.backup_encrypted_content %}
+                                <!-- Eğer veri bozuksa SADECE KURTAR gösterilir (Güvenlik gereği düzenlenemez) -->
+                                <a href="/restore/{{ report.id }}" class="btn btn-sm btn-success shadow-sm w-100">
+                                    <i class="fa-solid fa-rotate-left me-1"></i> Veriyi Kurtar
+                                </a>
+                            {% else %}
+                                <!-- Eğer veri sağlamsa TÜM İŞLEMLER gösterilir -->
+                                <div class="btn-group shadow-sm" role="group">
+                                    <!-- 1. İncele -->
+                                    <a href="/view/{{ report.id }}" class="btn btn-sm btn-primary" title="Detaylı İncele">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    
+                                    <!-- 2. Düzenle (Update) -->
+                                    <a href="/doctor/edit/{{ report.id }}" class="btn btn-sm btn-warning" title="Raporu Düzenle">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+
+                                    <!-- 3. Hackle (Demo) -->
+                                    <a href="/tamper/{{ report.id }}" class="btn btn-sm btn-dark" title="Hacker Simülasyonu (Veriyi Boz)">
+                                        <i class="fa-solid fa-bug"></i>
+                                    </a>
+
+                                    <!-- 4. Sil (Delete) -->
+                                    <a href="/doctor/delete/{{ report.id }}" class="btn btn-sm btn-danger" title="Kalıcı Olarak Sil" onclick="return confirm('DİKKAT: {{ report.patient_name }} ait kaydı silmek üzeresiniz. Bu işlem geri alınamaz!\n\nOnaylıyor musunuz?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">Henüz sisteme girilmiş bir rapor bulunmuyor.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Yanıp sönme animasyonu -->
+<style>
+@keyframes blink { 50% { opacity: 0.5; } }
+.blink-animation { animation: blink 1.5s linear infinite; }
+</style>
+
+<!-- SAĞ TARAFTAN AÇILAN LOG PANELİ -->
+<div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="logPanel" style="min-width: 450px;">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title"><i class="fa-solid fa-terminal me-2 text-warning"></i>Audit Trail (Loglar)</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <table class="table table-dark table-striped table-hover table-sm mb-0" style="font-size: 0.8rem; font-family: monospace;">
+            <thead>
+                <tr class="text-muted">
+                    <th class="ps-3">Zaman</th>
+                    <th>Olay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td class="ps-3 text-secondary" style="width: 80px;">{{ log.timestamp.strftime('%H:%M:%S') }}</td>
+                    <td>
+                        {% if log.action_type == 'SALDIRI SİMÜLASYONU' %}
+                            <strong class="text-danger">⚠️ SALDIRI</strong>
+                        {% elif log.action_type == 'Veri Kurtarma' %}
+                            <strong class="text-success">♻️ KURTARMA</strong>
+                        {% elif log.action_type == 'Giriş' %}
+                            <strong class="text-info">➜ GİRİŞ</strong>
+                        {% elif log.action_type == 'Silme' %}
+                            <strong class="text-danger">❌ SİLME</strong>
+                        {% elif log.action_type == 'Güncelleme' %}
+                            <strong class="text-warning">✎ GÜNCELLEME</strong>
+                        {% else %}
+                            <strong class="text-light">● {{ log.action_type }}</strong>
+                        {% endif %}
+                        <div class="text-light opacity-75 text-wrap mt-1">{{ log.description }}</div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2" class="p-3 text-center text-muted">Log kaydı yok.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

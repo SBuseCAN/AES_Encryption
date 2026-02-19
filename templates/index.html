@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Güvenli Sağlık Sistemi</title></head>
+<body>
+    <h2>Hasta Raporları Listesi</h2>
+    <a href="/add">Yeni Rapor Ekle (Doktor)</a>
+    <hr>
+    <ul>
+        {% for report in reports %}
+            <li>
+                {{ report.patient_name }} - 
+                <a href="/view/{{ report.id }}">Şifreli Veriyi Çöz ve Görüntüle</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
